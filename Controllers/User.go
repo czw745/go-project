@@ -1,29 +1,23 @@
 package Controllers
 
 import (
-	"fmt"
 	"go-project/Models"
+	"go-project/Services"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-type respone struct {
+type response struct {
 	Message string `json:"message"`
-	Result  bool   `json:"result"`
 }
 
 //GetUsers ... Get all users
 func GetUsers(c *gin.Context) {
 	var user []Models.User
-	err := Models.GetAllUsers(&user)
-
+	err := Services.GetAllUsers(&user)
 	if err != nil {
-		r := &respone{
-			Message: "user create fail",
-			Result:  false,
-		}
-		c.JSON(http.StatusOK, *r)
+		c.JSON(http.StatusBadRequest, &response{Message: err.Error()})
 	} else {
 		c.JSON(http.StatusOK, user)
 	}
@@ -32,22 +26,16 @@ func GetUsers(c *gin.Context) {
 //CreateUser ... Create User
 func CreateUser(c *gin.Context) {
 	var user Models.User
-	c.BindJSON(&user)
-	err := Models.CreateUser(&user)
-	fmt.Println("message", err)
-
+	err := c.BindJSON(&user)
 	if err != nil {
-		r := &respone{
-			Message: "user create fail",
-			Result:  false,
-		}
-		c.JSON(http.StatusOK, *r)
+		c.JSON(http.StatusBadRequest, &response{Message: err.Error()})
+		return
+	}
+	err = Services.CreateUser(&user)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, &response{Message: err.Error()})
 	} else {
-		r := &respone{
-			Message: "user create success",
-			Result:  true,
-		}
-		c.JSON(http.StatusOK, *r)
+		c.JSON(http.StatusOK, &response{Message: "user create success"})
 	}
 }
 
@@ -55,10 +43,9 @@ func CreateUser(c *gin.Context) {
 func GetUserByID(c *gin.Context) {
 	id := c.Params.ByName("id")
 	var user Models.User
-	err := Models.GetUserByID(&user, id)
+	err := Services.GetUserByID(&user, id)
 	if err != nil {
-		fmt.Println(user, err)
-		c.AbortWithStatus(http.StatusNotFound)
+		c.JSON(http.StatusBadRequest, &response{Message: err.Error()})
 	} else {
 		c.JSON(http.StatusOK, user)
 	}
@@ -68,22 +55,14 @@ func GetUserByID(c *gin.Context) {
 func UpdateUser(c *gin.Context) {
 	var user Models.User
 	id := c.Params.ByName("id")
-	err := Models.GetUserByID(&user, id)
+	err := Services.GetUserByID(&user, id)
 	if err != nil {
-		r := &respone{
-			Message: "cant't find the user, user update fail",
-			Result:  false,
-		}
-		c.JSON(http.StatusOK, *r)
+		c.JSON(http.StatusBadRequest, &response{Message: err.Error()})
 	} else {
 		c.BindJSON(&user)
-		err = Models.UpdateUser(&user, id)
+		err = Services.UpdateUser(&user, id)
 		if err == nil {
-			r := &respone{
-				Message: "user update success",
-				Result:  true,
-			}
-			c.JSON(http.StatusOK, *r)
+			c.JSON(http.StatusOK, &response{Message: "user update success"})
 		}
 	}
 }
@@ -92,18 +71,10 @@ func UpdateUser(c *gin.Context) {
 func DeleteUser(c *gin.Context) {
 	var user Models.User
 	id := c.Params.ByName("id")
-	err := Models.DeleteUser(&user, id)
+	err := Services.DeleteUser(&user, id)
 	if err != nil {
-		r := &respone{
-			Message: "cant't find the user, user delete fail",
-			Result:  false,
-		}
-		c.JSON(http.StatusOK, *r)
+		c.JSON(http.StatusBadRequest, &response{Message: err.Error()})
 	} else {
-		r := &respone{
-			Message: "user delete success",
-			Result:  true,
-		}
-		c.JSON(http.StatusOK, *r)
+		c.JSON(http.StatusOK, &response{Message: "user delete success"})
 	}
 }

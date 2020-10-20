@@ -20,5 +20,5 @@ func main() {
 	Config.DB.AutoMigrate(&Models.User{})
 	r := Routes.SetupRouter()
 	//running
-	r.Run()
+	r.Run(":80")
 }
