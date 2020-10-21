@@ -3,11 +3,14 @@ package Config
 // DBConfig represents db configuration
 import (
 	"fmt"
+	"go-project/Models"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
+var err error
 
 type DBConfig struct {
 	Driver   string
@@ -20,7 +23,6 @@ type DBConfig struct {
 
 func BuildDBConfig() *DBConfig {
 	dbConfig := DBConfig{
-		Driver:   "mysql",
 		Host:     "localhost",
 		Port:     3308,
 		User:     "root",
@@ -28,10 +30,6 @@ func BuildDBConfig() *DBConfig {
 		DBName:   "test",
 	}
 	return &dbConfig
-}
-
-func DbDriver(db *DBConfig) string {
-	return fmt.Sprintf(db.Driver)
 }
 
 func DbURL(db *DBConfig) string {
@@ -43,4 +41,12 @@ func DbURL(db *DBConfig) string {
 		db.Port,
 		db.DBName,
 	)
+}
+
+func DbConnection() {
+	DB, err = gorm.Open(mysql.Open(DbURL(BuildDBConfig())), &gorm.Config{})
+	if err != nil {
+		fmt.Println("Status:", err)
+	}
+	DB.AutoMigrate(&Models.Company{}, &Models.User{})
 }

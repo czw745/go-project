@@ -1,6 +1,7 @@
 package Controllers
 
 import (
+	"fmt"
 	"go-project/Models"
 	"go-project/Services"
 	"net/http"
@@ -27,6 +28,7 @@ func GetUsers(c *gin.Context) {
 func CreateUser(c *gin.Context) {
 	var user Models.User
 	err := c.BindJSON(&user)
+	fmt.Println("err", err)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, &response{Message: err.Error()})
 		return
@@ -47,6 +49,18 @@ func GetUserByID(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, &response{Message: err.Error()})
 	} else {
+		c.JSON(http.StatusOK, user)
+	}
+}
+
+//GetUserByName ... Get the user by name
+func GetUserByName(c *gin.Context) {
+	name := c.Query("name")
+	user, err := Services.GetUserByName(name)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, &response{Message: err.Error()})
+	} else {
+		fmt.Println("user", user)
 		c.JSON(http.StatusOK, user)
 	}
 }
