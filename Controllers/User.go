@@ -1,24 +1,20 @@
-package Controllers
+package controllers
 
 import (
-	"fmt"
-	"go-project/Models"
-	"go-project/Services"
+	"go-project/models"
+	"go-project/services"
+	"go-project/structs"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-type response struct {
-	Message string `json:"message"`
-}
-
-//GetUsers ... Get all users
 func GetUsers(c *gin.Context) {
-	var user []Models.User
-	err := Services.GetAllUsers(&user)
+	var res structs.Pagination
+	user, err := services.GetAllUsers()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, &response{Message: err.Error()})
+		res.Message = err.Error()
+		c.JSON(http.StatusBadRequest, res)
 	} else {
 		c.JSON(http.StatusOK, user)
 	}
@@ -26,28 +22,32 @@ func GetUsers(c *gin.Context) {
 
 //CreateUser ... Create User
 func CreateUser(c *gin.Context) {
-	var user Models.User
+	var user models.User
+	var res structs.Pagination
 	err := c.BindJSON(&user)
-	fmt.Println("err", err)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, &response{Message: err.Error()})
+		res.Message = err.Error()
+		c.JSON(http.StatusBadRequest, res)
 		return
 	}
-	err = Services.CreateUser(&user)
+	err = services.CreateUser(&user)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, &response{Message: err.Error()})
+		res.Message = err.Error()
+		c.JSON(http.StatusBadRequest, res)
 	} else {
-		c.JSON(http.StatusOK, &response{Message: "user create success"})
+		res.Message = "user create success"
+		c.JSON(http.StatusOK, res)
 	}
 }
 
 //GetUserByID ... Get the user by id
 func GetUserByID(c *gin.Context) {
+	var res structs.Pagination
 	id := c.Params.ByName("id")
-	var user Models.User
-	err := Services.GetUserByID(&user, id)
+	user, err := services.GetUserByID(id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, &response{Message: err.Error()})
+		res.Message = err.Error()
+		c.JSON(http.StatusBadRequest, res)
 	} else {
 		c.JSON(http.StatusOK, user)
 	}
@@ -55,40 +55,54 @@ func GetUserByID(c *gin.Context) {
 
 //GetUserByName ... Get the user by name
 func GetUserByName(c *gin.Context) {
+	var res structs.Pagination
 	name := c.Query("name")
-	user, err := Services.GetUserByName(name)
+	user, err := services.GetUserByName(name)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, &response{Message: err.Error()})
+		res.Message = err.Error()
+		c.JSON(http.StatusBadRequest, res)
 	} else {
-		fmt.Println("user", user)
 		c.JSON(http.StatusOK, user)
 	}
 }
 
 //UpdateUser ... Update the user information
 func UpdateUser(c *gin.Context) {
-	var user Models.User
+	var res structs.Pagination
 	id := c.Params.ByName("id")
-	err := Services.GetUserByID(&user, id)
+	user, err := services.CheckUserByID(id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, &response{Message: err.Error()})
+		res.Message = err.Error()
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+	c.BindJSON(&user)
+	err = services.UpdateUser(user)
+	if err != nil {
+		res.Message = err.Error()
+		c.JSON(http.StatusBadRequest, res)
 	} else {
-		c.BindJSON(&user)
-		err = Services.UpdateUser(&user, id)
-		if err == nil {
-			c.JSON(http.StatusOK, &response{Message: "user update success"})
-		}
+		res.Message = "user update success"
+		c.JSON(http.StatusOK, res)
 	}
 }
 
 //DeleteUser ... Delete the user
 func DeleteUser(c *gin.Context) {
-	var user Models.User
+	var res structs.Pagination
 	id := c.Params.ByName("id")
-	err := Services.DeleteUser(&user, id)
+	user, err := services.CheckUserByID(id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, &response{Message: err.Error()})
+		res.Message = err.Error()
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+	err = services.DeleteUser(user, id)
+	if err != nil {
+		res.Message = err.Error()
+		c.JSON(http.StatusBadRequest, res)
 	} else {
-		c.JSON(http.StatusOK, &response{Message: "user delete success"})
+		res.Message = "user delete success"
+		c.JSON(http.StatusOK, res)
 	}
 }

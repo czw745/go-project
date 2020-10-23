@@ -1,7 +1,7 @@
-package Routes
+package routes
 
 import (
-	"go-project/Controllers"
+	"go-project/controllers"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -16,14 +16,13 @@ func SetupRouter() *gin.Engine {
 	{
 		user := grp1.Group("/user")
 		{
-			user.GET("/query", Controllers.GetUsers)
-			user.POST("/create", Controllers.CreateUser)
-			user.GET("/show/:id", Controllers.GetUserByID)
-			user.GET("/search", Controllers.GetUserByName)
-			user.PUT("/update/:id", Controllers.UpdateUser)
-			user.DELETE("/delete/:id", Controllers.DeleteUser)
+			user.GET("/query", controllers.GetUsers)
+			user.POST("/create", controllers.CreateUser)
+			user.GET("/show/:id", controllers.GetUserByID)
+			user.GET("/search", controllers.GetUserByName)
+			user.PUT("/update/:id", controllers.UpdateUser)
+			user.DELETE("/delete/:id", controllers.DeleteUser)
 		}
-
 	}
 	return r
 }

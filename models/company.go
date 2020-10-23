@@ -1,4 +1,4 @@
-package Models
+package models
 
 type Company struct {
 	ID   uint   `gorm:"column:id" json:"id"`

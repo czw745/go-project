@@ -1,9 +1,9 @@
-package Config
+package config
 
 // DBConfig represents db configuration
 import (
 	"fmt"
-	"go-project/Models"
+	"go-project/models"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -48,5 +48,5 @@ func DbConnection() {
 	if err != nil {
 		fmt.Println("Status:", err)
 	}
-	DB.AutoMigrate(&Models.Company{}, &Models.User{})
+	DB.AutoMigrate(&models.Company{}, &models.User{})
 }

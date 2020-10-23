@@ -1,13 +1,13 @@
 package main
 
 import (
-	"go-project/Config"
-	"go-project/Routes"
+	"go-project/config"
+	"go-project/routes"
 )
 
 func main() {
-	Config.DbConnection()
-	r := Routes.SetupRouter()
+	config.DbConnection()
+	r := routes.SetupRouter()
 	//running
 	r.Run(":80")
 }
