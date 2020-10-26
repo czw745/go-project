@@ -3,15 +3,28 @@ package services
 import (
 	"go-project/config"
 	"go-project/models"
+	"go-project/structs"
+	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
+	"gorm.io/gorm"
 )
 
+var total int64
+
 //GetAllUsers Fetch all user data
-func GetAllUsers() (user []models.User, err error) {
-	if err = config.DB.Preload("Company").Find(&user).Error; err != nil {
+func GetAllUsers(page, pageSize string) (res structs.Pagination, err error) {
+	var user []models.User
+
+	if err = config.DB.Preload("Company").Scopes(Paginate(page, pageSize)).Find(&user).Error; err != nil {
 		return
 	}
+
+	config.DB.Model(&models.User{}).Group("name").Count(&total)
+	res.Data = user
+	res.Page, _ = strconv.Atoi(page)
+	res.PageSize, _ = strconv.Atoi(pageSize)
+	res.Total = total
 	return
 }
 
@@ -59,4 +72,24 @@ func UpdateUser(user models.User) (err error) {
 func DeleteUser(user models.User, id string) (err error) {
 	config.DB.Where("id = ?", id).Delete(&user)
 	return nil
+}
+
+func Paginate(page, pageSize string) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		page, _ := strconv.Atoi(page)
+		if page == 0 {
+			page = 1
+		}
+
+		pageSize, _ := strconv.Atoi(pageSize)
+		switch {
+		case pageSize > 100:
+			pageSize = 100
+		case pageSize <= 0:
+			pageSize = 10
+		}
+
+		offset := (page - 1) * pageSize
+		return db.Offset(offset).Limit(pageSize)
+	}
 }

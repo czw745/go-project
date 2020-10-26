@@ -10,13 +10,15 @@ import (
 )
 
 func GetUsers(c *gin.Context) {
-	var res structs.Pagination
-	user, err := services.GetAllUsers()
+	page := c.Query("page")
+	pageSize := c.Query("page_size")
+	res, err := services.GetAllUsers(page, pageSize)
 	if err != nil {
 		res.Message = err.Error()
 		c.JSON(http.StatusBadRequest, res)
 	} else {
-		c.JSON(http.StatusOK, user)
+		res.Message = "success"
+		c.JSON(http.StatusOK, res)
 	}
 }
 
