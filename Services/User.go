@@ -13,65 +13,78 @@ import (
 var total int64
 
 //GetAllUsers Fetch all user data
-func GetAllUsers(page, pageSize string) (res structs.Pagination, err error) {
+func GetAllUsers(page, pageSize string) (result structs.Pagination, res structs.Response, err error) {
 	var user []models.User
-
 	if err = config.DB.Preload("Company").Scopes(Paginate(page, pageSize)).Find(&user).Error; err != nil {
+		res.Message = err.Error()
 		return
 	}
-
-	config.DB.Model(&models.User{}).Group("name").Count(&total)
-	res.Data = user
-	res.Page, _ = strconv.Atoi(page)
-	res.PageSize, _ = strconv.Atoi(pageSize)
-	res.Total = total
+	config.DB.Model(&models.User{}).Count(&total)
+	result.Data = user
+	result.Page, _ = strconv.Atoi(page)
+	result.PageSize, _ = strconv.Atoi(pageSize)
+	result.Total = total
 	return
 }
 
 //CreateUser ... Insert New data
-func CreateUser(user *models.User) (err error) {
+func CreateUser(user *models.User) (res structs.Response, err error) {
 	if err = config.DB.Create(user).Error; err != nil {
-		return err
+		res.Message = err.Error()
+		return
 	}
-	return nil
+	res.Message = "user create success"
+	return
 }
 
 //GetUserByID ... Fetch only one user by Id
-func GetUserByID(id string) (user models.User, err error) {
+func GetUserByID(id string) (user models.User, res structs.Response, err error) {
 	if err = config.DB.Preload("Company").Where("id = ?", id).First(&user).Error; err != nil {
+		res.Message = err.Error()
 		return
 	}
 	return
 }
 
 //CheckUserByID ... Fetch only one user by Id
-func CheckUserByID(id string) (user models.User, err error) {
-	if user, err = GetUserByID(id); err != nil {
+func CheckUserByID(id string) (user models.User, res structs.Response, err error) {
+	if user, res, err = GetUserByID(id); err != nil {
+		res.Message = err.Error()
 		return
 	}
 	return
 }
 
-//GetUserByName ... Fetch only one user by name
-func GetUserByName(name string) (user []models.User, err error) {
-	if err = config.DB.Preload("Company").Where("name LIKE ?", "%"+name+"%").Find(&user).Error; err != nil {
+//GetUserByKeyword ... Fetch only one user by name
+func GetUserByKeyword(page, pageSize, keyword string) (result structs.Pagination, res structs.Response, err error) {
+	var user []models.User
+	if err = config.DB.Preload("Company").Where("name LIKE ?", "%"+keyword+"%").Or("email LIKE ?", "%"+keyword+"%").Scopes(Paginate(page, pageSize)).Find(&user).Error; err != nil {
+		res.Message = err.Error()
 		return
 	}
+	config.DB.Model(&models.User{}).Where("name LIKE ?", "%"+keyword+"%").Or("email LIKE ?", "%"+keyword+"%").Count(&total)
+	result.Data = user
+	result.Page, _ = strconv.Atoi(page)
+	result.PageSize, _ = strconv.Atoi(pageSize)
+	result.Total = total
 	return
 }
 
 //UpdateUser ... Update user
-func UpdateUser(user models.User) (err error) {
+func UpdateUser(user models.User) (res structs.Response, err error) {
 	if err = config.DB.Save(&user).Error; err != nil {
-		return err
+		res.Message = err.Error()
+		return
 	}
-	return nil
+	res.Message = "user update success"
+	return
 }
 
 //DeleteUser ... Delete user
-func DeleteUser(user models.User, id string) (err error) {
+func DeleteUser(user models.User, id string) (res structs.Response, err error) {
 	config.DB.Where("id = ?", id).Delete(&user)
-	return nil
+	res.Message = "user delete success"
+	return
 }
 
 func Paginate(page, pageSize string) func(db *gorm.DB) *gorm.DB {
@@ -86,7 +99,7 @@ func Paginate(page, pageSize string) func(db *gorm.DB) *gorm.DB {
 		case pageSize > 100:
 			pageSize = 100
 		case pageSize <= 0:
-			pageSize = 10
+			pageSize = 5
 		}
 
 		offset := (page - 1) * pageSize

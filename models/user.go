@@ -13,7 +13,7 @@ type User struct {
 	Email     string         `gorm:"column:email; NOT NULL" json:"email" binding:"required"`
 	Password  string         `gorm:"column:password; NOT NULL" json:"password" binding:"required"`
 	Phone     *string        `gorm:"column:phone" json:"phone"`
-	CompanyID int            `gorm:"column:company_id" json:"company_id"`
+	CompanyID *int            `gorm:"column:company_id" json:"company_id"`
 	Company   Company        `gorm:"foreignKey:CompanyID" json:"company"`
 	CreatedAt time.Time      `gorm:"column: created_at" json:"created_at"`
 	UpdatedAt time.Time      `gorm:"column: updated_at" json:"updated_at"`
