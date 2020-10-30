@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"go-project/controllers/role"
 	"go-project/controllers/user"
 
 	"github.com/gin-contrib/cors"
@@ -22,6 +23,17 @@ func SetupRouter() *gin.Engine {
 			apiUser.GET("/search", user.Search)
 			apiUser.PUT("/update/:id", user.Update)
 			apiUser.DELETE("/delete/:id", user.Delete)
+			apiUser.GET("/role-select", user.RoleSelect)
+		}
+
+		apiRole := apiv1.Group("/role")
+		{
+			apiRole.GET("/query", role.Get)
+			apiRole.POST("/create", role.Create)
+			apiRole.GET("/show/:id", role.Show)
+			apiRole.GET("/search", role.Search)
+			apiRole.PUT("/update/:id", role.Update)
+			apiRole.DELETE("/delete/:id", role.Delete)
 		}
 	}
 	return r

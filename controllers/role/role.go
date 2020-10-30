@@ -1,4 +1,4 @@
-package user
+package role
 
 import (
 	"go-project/models"
@@ -13,7 +13,7 @@ import (
 func Get(c *gin.Context) {
 	page := c.Query("page")
 	pageSize := c.Query("page_size")
-	result, res, err := services.GetAllUsers(page, pageSize)
+	result, res, err := services.GetAllRoles(page, pageSize)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, res)
 	} else {
@@ -23,15 +23,15 @@ func Get(c *gin.Context) {
 
 //Create ... Create User
 func Create(c *gin.Context) {
-	var user models.User
+	var role models.Role
 	var res structs.Response
-	err := c.BindJSON(&user)
+	err := c.BindJSON(&role)
 	if err != nil {
 		res.Message = err.Error()
 		c.JSON(http.StatusBadRequest, res)
 		return
 	}
-	res, err = services.CreateUser(&user)
+	res, err = services.CreateRole(&role)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, res)
 	} else {
@@ -42,20 +42,20 @@ func Create(c *gin.Context) {
 //Show ... Get the user by id
 func Show(c *gin.Context) {
 	id := c.Params.ByName("id")
-	user, res, err := services.GetUserByID(id)
+	data, res, err := services.GetRoleByID(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, res)
 	} else {
-		c.JSON(http.StatusOK, user)
+		c.JSON(http.StatusOK, data)
 	}
 }
 
-//Search ... search the user by keyword
+//Search ... search the role by keyword
 func Search(c *gin.Context) {
 	keyword := c.Query("keyword")
 	page := c.Query("page")
 	pageSize := c.Query("page_size")
-	result, res, err := services.GetUserByKeyword(page, pageSize, keyword)
+	result, res, err := services.GetRoleByKeyword(page, pageSize, keyword)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, res)
 	} else {
@@ -63,16 +63,21 @@ func Search(c *gin.Context) {
 	}
 }
 
-//UpdateUser ... Update the user information
+//Update ... Update the role information
 func Update(c *gin.Context) {
 	id := c.Params.ByName("id")
-	user, res, err := services.CheckUserByID(id)
+	role, res, err := services.CheckRoleByID(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, res)
 		return
 	}
-	c.BindJSON(&user)
-	res, err = services.UpdateUser(user)
+	err = c.BindJSON(&role)
+	if err != nil {
+		res.Message = err.Error()
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+	res, err = services.UpdateRole(role)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, res)
 	} else {
@@ -80,27 +85,18 @@ func Update(c *gin.Context) {
 	}
 }
 
-// //DeleteUser ... Delete the user
+//Delete ... Delete the role
 func Delete(c *gin.Context) {
 	id := c.Params.ByName("id")
-	user, res, err := services.CheckUserByID(id)
+	data, res, err := services.CheckRoleByID(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, res)
 		return
 	}
-	res, err = services.DeleteUser(user, id)
+	res, err = services.DeleteRole(data, id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, res)
 	} else {
 		c.JSON(http.StatusOK, res)
-	}
-}
-
-func RoleSelect(c *gin.Context) {
-	role, res, err := services.RoleSelect()
-	if err != nil {
-		c.JSON(http.StatusBadRequest, res)
-	} else {
-		c.JSON(http.StatusOK, role)
 	}
 }

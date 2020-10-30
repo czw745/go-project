@@ -1,23 +1,14 @@
 package models
 
-import (
-	"time"
-
-	"gorm.io/gorm"
-)
-
 type User struct {
-	ID        uint           `gorm:"column:id" json:"id"`
-	Name      string         `gorm:"column:name; NOT NULL" json:"name" binding:"required"`
-	Nickname  *string        `gorm:"column:nickname" json:"nickname"`
-	Email     string         `gorm:"column:email; NOT NULL" json:"email" binding:"required"`
-	Password  string         `gorm:"column:password; NOT NULL" json:"password" binding:"required"`
-	Phone     *string        `gorm:"column:phone" json:"phone"`
-	CompanyID *int            `gorm:"column:company_id" json:"company_id"`
-	Company   Company        `gorm:"foreignKey:CompanyID" json:"company"`
-	CreatedAt time.Time      `gorm:"column: created_at" json:"created_at"`
-	UpdatedAt time.Time      `gorm:"column: updated_at" json:"updated_at"`
-	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at"`
+	Default
+	Name            string  `gorm:"column:name; NOT NULL" json:"name" binding:"required"`
+	Email           string  `gorm:"column:email; NOT NULL" json:"email" binding:"required"`
+	EmailVerifiedAt *string `gorm:"column:email_verified_at" json:"email_verified_at"`
+	Password        string  `gorm:"column:password; NOT NULL" json:"password" binding:"required"`
+	Status          uint    `gorm:"column:status" json:"status"`
+	Deletable       uint    `gorm:"column:deletable" json:"deletable"`
+	Role            []Role  `gorm:"many2many:user_role;" json:"role"`
 }
 
 func (b *User) TableName() string {

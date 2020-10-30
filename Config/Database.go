@@ -48,5 +48,5 @@ func DbConnection() {
 	if err != nil {
 		fmt.Println("Status:", err)
 	}
-	DB.AutoMigrate(&models.Company{}, &models.User{})
+	DB.AutoMigrate(&models.Role{}, &models.User{})
 }
