@@ -69,6 +69,9 @@ func GetUserByKeyword(page, pageSize, keyword string) (result structs.Pagination
 
 //UpdateUser ... Update user
 func UpdateUser(user models.User) (res structs.Response, err error) {
+	role := user.Role
+	config.DB.Model(&user).Association("Role").Clear()
+	user.Role = role
 	if err = config.DB.Save(&user).Error; err != nil {
 		res.Message = err.Error()
 		return

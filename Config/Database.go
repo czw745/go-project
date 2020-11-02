@@ -49,4 +49,10 @@ func DbConnection() {
 		fmt.Println("Status:", err)
 	}
 	DB.AutoMigrate(&models.Role{}, &models.User{})
+
+	// TODO
+	// role := &models.Role{Name: "Super Admin", DisplayName: "超級管理員", Status: 1, Deletable: 0}
+	// DB.Create(role)
+	// user := &models.User{Name: "Admin", Email: "admin@example.com", Password: "12345678", Status: 1, Deletable: 0}
+	// DB.Create(user)
 }

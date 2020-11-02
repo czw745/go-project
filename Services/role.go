@@ -85,7 +85,7 @@ func DeleteRole(role models.Role, id string) (res structs.Response, err error) {
 }
 
 func RoleSelect() (role []models.RoleSelect, res structs.Response, err error) {
-	if err = config.DB.Table("roles").Where("status = ?", "1").Where("name != ?", "Super Admin").Select("id, name, display_name").Find(&role).Error; err != nil {
+	if err = config.DB.Table("roles").Where("status = ?", "1").Where("name != ?", "Super Admin").Find(&role).Error; err != nil {
 		res.Message = err.Error()
 		return
 	}
