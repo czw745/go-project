@@ -5,8 +5,6 @@ import (
 	"go-project/models"
 	"go-project/structs"
 	"strconv"
-
-	_ "github.com/go-sql-driver/mysql"
 )
 
 //GetAllRoles Fetch all role data
@@ -84,6 +82,7 @@ func DeleteRole(role models.Role, id string) (res structs.Response, err error) {
 	return
 }
 
+// RoleSelect ... Select role
 func RoleSelect() (role []models.RoleSelect, res structs.Response, err error) {
 	if err = config.DB.Table("roles").Where("status = ?", "1").Where("name != ?", "Super Admin").Find(&role).Error; err != nil {
 		res.Message = err.Error()

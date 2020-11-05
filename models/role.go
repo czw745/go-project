@@ -2,10 +2,11 @@ package models
 
 type Role struct {
 	Default
-	Name        string `gorm:"column:name; NOT NULL" json:"name,omitempty" binding:"required"`
-	DisplayName string `gorm:"column:display_name; NOT NULL" json:"display_name,omitempty" binding:"required"`
-	Status      int    `gorm:"column:status; NOT NULL" json:"status"`
-	Deletable   int    `gorm:"column:deletable; NOT NULL" json:"deletable"`
+	Name        string       `gorm:"column:name; NOT NULL" json:"name,omitempty" binding:"required"`
+	DisplayName string       `gorm:"column:display_name; NOT NULL" json:"display_name,omitempty" binding:"required"`
+	Status      int          `gorm:"column:status; NOT NULL" json:"status"`
+	Deletable   int          `gorm:"column:deletable; NOT NULL" json:"deletable"`
+	Permission  []Permission `gorm:"many2many:role_has_permission;" json:"permission"`
 }
 
 func (b *Role) TableName() string {

@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type User struct {
 	Default
 	Name            string  `gorm:"column:name; NOT NULL" json:"name" binding:"required"`
@@ -8,9 +10,19 @@ type User struct {
 	Password        string  `gorm:"column:password; NOT NULL" json:"password" binding:"required"`
 	Status          uint    `gorm:"column:status; NOT NULL" json:"status"`
 	Deletable       uint    `gorm:"column:deletable; NOT NULL" json:"deletable"`
-	Role            []Role  `gorm:"many2many:user_role;" json:"role"`
+	Roles           []Role  `gorm:"many2many:user_role;" json:"roles"`
 }
 
 func (b *User) TableName() string {
 	return "users"
+}
+
+type UserResponse struct {
+	ID        uint      `json:"id"`
+	Name      string    `json:"name"`
+	Email     string    `json:"email"`
+	Status    uint      `json:"status"`
+	Deletable uint      `json:"deletable"`
+	CreatedAt time.Time `json:"created_at"`
+	Roles     []Role    `gorm:"foreignKey:ID" json:"roles"`
 }

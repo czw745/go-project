@@ -8,6 +8,7 @@ import (
 
 var total int64
 
+// Paginate ... pagination
 func Paginate(page, pageSize string) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		page, _ := strconv.Atoi(page)
