@@ -1,7 +1,10 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
+//User struct
 type User struct {
 	Default
 	Name            string  `gorm:"column:name; NOT NULL" json:"name" binding:"required"`
@@ -13,10 +16,12 @@ type User struct {
 	Roles           []Role  `gorm:"many2many:user_role;" json:"roles"`
 }
 
+//TableName ... User
 func (b *User) TableName() string {
 	return "users"
 }
 
+//UserResponse struct
 type UserResponse struct {
 	ID        uint      `json:"id"`
 	Name      string    `json:"name"`

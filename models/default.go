@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
+//Default struct
 type Default struct {
 	ID        uint            `gorm:"column:id" json:"id"`
 	CreatedAt time.Time       `gorm:"column:created_at" json:"created_at"`

@@ -10,3 +10,9 @@ type Pagination struct {
 type Response struct {
 	Message string `json:"message" form:"message"`
 }
+
+type RoleSelect struct {
+	ID          uint   `json:"id"`
+	Name        string `json:"name"`
+	DisplayName string `json:"display_name"`
+}

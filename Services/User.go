@@ -9,13 +9,13 @@ import (
 
 //GetAllUsers Fetch all user data
 func GetAllUsers(page, pageSize string) (result structs.Pagination, res structs.Response, err error) {
-	var user []models.UserResponse
-	if err = config.DB.Table("users").Preload("Roles").Scopes(Paginate(page, pageSize)).Find(&user).Error; err != nil {
+	var users []models.UserResponse
+	if err = config.DB.Table("users").Preload("Roles").Scopes(Paginate(page, pageSize)).Find(&users).Error; err != nil {
 		res.Message = err.Error()
 		return
 	}
 	config.DB.Model(&models.User{}).Count(&total)
-	result.Data = user
+	result.Data = users
 	result.Page, _ = strconv.Atoi(page)
 	result.PageSize, _ = strconv.Atoi(pageSize)
 	result.Total = total

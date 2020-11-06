@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"go-project/controllers/permission"
 	"go-project/controllers/role"
 	"go-project/controllers/user"
 
@@ -34,6 +35,11 @@ func SetupRouter() *gin.Engine {
 			apiRole.GET("/search", role.Search)
 			apiRole.PUT("/update/:id", role.Update)
 			apiRole.DELETE("/delete/:id", role.Delete)
+		}
+
+		apiPermission := apiv1.Group("/permission")
+		{
+			apiPermission.GET("/list", permission.Get)
 		}
 	}
 	return r

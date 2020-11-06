@@ -1,5 +1,6 @@
 package models
 
+//Role struct
 type Role struct {
 	Default
 	Name        string       `gorm:"column:name; NOT NULL" json:"name,omitempty" binding:"required"`
@@ -9,12 +10,16 @@ type Role struct {
 	Permission  []Permission `gorm:"many2many:role_has_permission;" json:"permission"`
 }
 
+//TableName ... PermissionCategory
 func (b *Role) TableName() string {
 	return "roles"
 }
 
-type RoleSelect struct {
+//RoleResponse struct
+type RoleResponse struct {
 	ID          uint   `json:"id"`
 	Name        string `json:"name"`
 	DisplayName string `json:"display_name"`
+	Status      int    `json:"status"`
+	Deletable   int    `json:"deletable"`
 }

@@ -83,8 +83,9 @@ func DeleteRole(role models.Role, id string) (res structs.Response, err error) {
 }
 
 // RoleSelect ... Select role
-func RoleSelect() (role []models.RoleSelect, res structs.Response, err error) {
-	if err = config.DB.Table("roles").Where("status = ?", "1").Where("name != ?", "Super Admin").Find(&role).Error; err != nil {
+func RoleSelect() (roles []structs.RoleSelect, res structs.Response, err error) {
+	var role models.Role
+	if err = config.DB.Model(&role).Where("status = ?", "1").Where("name != ?", "Super Admin").Find(&roles).Error; err != nil {
 		res.Message = err.Error()
 		return
 	}
