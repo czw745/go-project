@@ -7,7 +7,7 @@ type Role struct {
 	DisplayName string       `gorm:"column:display_name; NOT NULL" json:"display_name,omitempty" binding:"required"`
 	Status      int          `gorm:"column:status; NOT NULL" json:"status"`
 	Deletable   int          `gorm:"column:deletable; NOT NULL" json:"deletable"`
-	Permission  []Permission `gorm:"many2many:role_has_permission;" json:"permission"`
+	Permissions []Permission `gorm:"many2many:role_has_permission;" json:"permissions"`
 }
 
 //TableName ... PermissionCategory
@@ -17,9 +17,10 @@ func (b *Role) TableName() string {
 
 //RoleResponse struct
 type RoleResponse struct {
-	ID          uint   `json:"id"`
-	Name        string `json:"name"`
-	DisplayName string `json:"display_name"`
-	Status      int    `json:"status"`
-	Deletable   int    `json:"deletable"`
+	ID          uint          `json:"id"`
+	Name        string        `json:"name"`
+	DisplayName string        `json:"display_name"`
+	Status      int           `json:"status"`
+	Deletable   int           `json:"deletable"`
+	Permissions *[]Permission `gorm:"foreignKey:ID" json:"permissions"`
 }

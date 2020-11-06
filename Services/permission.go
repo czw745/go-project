@@ -8,6 +8,7 @@ import (
 
 const tbPs = "permissions"
 const tbPc = "permission_category"
+const tbRHP = "role_has_permission"
 
 //GetParents ... get parent permission category
 func GetParents() (parents []models.PermissionCategoryParentResponse, res structs.Response, err error) {

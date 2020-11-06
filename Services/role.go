@@ -9,8 +9,8 @@ import (
 
 //GetAllRoles Fetch all role data
 func GetAllRoles(page, pageSize string) (result structs.Pagination, res structs.Response, err error) {
-	var role []models.Role
-	if err = config.DB.Scopes(Paginate(page, pageSize)).Find(&role).Error; err != nil {
+	var role []models.RoleResponse
+	if err = config.DB.Table("roles").Preload("Permissions").Scopes(Paginate(page, pageSize)).Find(&role).Error; err != nil {
 		res.Message = err.Error()
 		return
 	}
@@ -34,7 +34,7 @@ func CreateRole(role *models.Role) (res structs.Response, err error) {
 
 //GetRoleByID ... Fetch only one role by Id
 func GetRoleByID(id string) (role models.Role, res structs.Response, err error) {
-	if err = config.DB.Where("id = ?", id).First(&role).Error; err != nil {
+	if err = config.DB.Preload("Permissions").Where("id = ?", id).First(&role).Error; err != nil {
 		res.Message = err.Error()
 		return
 	}
