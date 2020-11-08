@@ -6,11 +6,13 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+//HashPassword ... hash password
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(bytes), err
 }
 
+//Seed ... init data
 func Seed() {
 	// Seed PermissionCategory
 	a := uint(1)
@@ -48,7 +50,7 @@ func Seed() {
 	adminRole := &models.Role{Name: "Super Admin", DisplayName: "超級管理員", Status: 1, Deletable: 0}
 	adminUser := &models.User{Name: "Admin", Email: "admin@example.com", Password: hash, Status: 1, Deletable: 0}
 	DB.Create(adminUser).Association("Roles").Append(adminRole)
-	DB.Find(adminRole).Association("Permission").Append(permission)
+	DB.Find(adminRole).Association("Permissions").Append(permission)
 
 	roles := &[]models.Role{
 		{Name: "Admin", DisplayName: "管理員", Status: 1, Deletable: 1},
