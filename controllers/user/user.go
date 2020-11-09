@@ -63,7 +63,7 @@ func Search(c *gin.Context) {
 	}
 }
 
-//UpdateUser ... Update the user information
+//Update ... Update the user information
 func Update(c *gin.Context) {
 	id := c.Params.ByName("id")
 	user, res, err := services.CheckUserByID(id)
@@ -71,7 +71,12 @@ func Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, res)
 		return
 	}
-	c.BindJSON(&user)
+	err = c.BindJSON(&user)
+	if err != nil {
+		res.Message = err.Error()
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
 	res, err = services.UpdateUser(user)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, res)
@@ -80,7 +85,7 @@ func Update(c *gin.Context) {
 	}
 }
 
-// //DeleteUser ... Delete the user
+//Delete ... Delete the user
 func Delete(c *gin.Context) {
 	id := c.Params.ByName("id")
 	user, res, err := services.CheckUserByID(id)
@@ -93,14 +98,5 @@ func Delete(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, res)
 	} else {
 		c.JSON(http.StatusOK, res)
-	}
-}
-
-func RoleSelect(c *gin.Context) {
-	role, res, err := services.RoleSelect()
-	if err != nil {
-		c.JSON(http.StatusBadRequest, res)
-	} else {
-		c.JSON(http.StatusOK, role)
 	}
 }

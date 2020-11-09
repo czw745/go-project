@@ -1,5 +1,6 @@
 package structs
 
+//Pagination ...
 type Pagination struct {
 	Page     int         `json:"page" form:"page"`
 	PageSize int         `json:"page_size" form:"page_size"`
@@ -7,12 +8,7 @@ type Pagination struct {
 	Data     interface{} `json:"data"`
 }
 
+//Response ...
 type Response struct {
 	Message string `json:"message" form:"message"`
-}
-
-type RoleSelect struct {
-	ID          uint   `json:"id"`
-	Name        string `json:"name"`
-	DisplayName string `json:"display_name"`
 }

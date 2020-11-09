@@ -10,7 +10,7 @@ import (
 //GetAllRoles Fetch all role data
 func GetAllRoles(page, pageSize string) (result structs.Pagination, res structs.Response, err error) {
 	var role []models.RoleResponse
-	if err = config.DB.Table("roles").Preload("Permissions").Scopes(Paginate(page, pageSize)).Find(&role).Error; err != nil {
+	if err = config.DB.Table("roles").Preload("Permissions.PermissionCategory").Scopes(Paginate(page, pageSize)).Find(&role).Error; err != nil {
 		res.Message = err.Error()
 		return
 	}
@@ -34,7 +34,7 @@ func CreateRole(role *models.Role) (res structs.Response, err error) {
 
 //GetRoleByID ... Fetch only one role by Id
 func GetRoleByID(id string) (role models.Role, res structs.Response, err error) {
-	if err = config.DB.Preload("Permissions").Where("id = ?", id).First(&role).Error; err != nil {
+	if err = config.DB.Preload("Permissions.PermissionCategory").Where("id = ?", id).First(&role).Error; err != nil {
 		res.Message = err.Error()
 		return
 	}
@@ -67,6 +67,9 @@ func GetRoleByKeyword(page, pageSize, keyword string) (result structs.Pagination
 
 //UpdateRole ... Update role
 func UpdateRole(role models.Role) (res structs.Response, err error) {
+	permissions := role.Permissions
+	config.DB.Model(&role).Association("Permissions").Clear()
+	role.Permissions = permissions
 	if err = config.DB.Save(&role).Error; err != nil {
 		res.Message = err.Error()
 		return
@@ -79,15 +82,5 @@ func UpdateRole(role models.Role) (res structs.Response, err error) {
 func DeleteRole(role models.Role, id string) (res structs.Response, err error) {
 	config.DB.Where("id = ?", id).Delete(&role)
 	res.Message = "role delete success"
-	return
-}
-
-// RoleSelect ... Select role
-func RoleSelect() (roles []structs.RoleSelect, res structs.Response, err error) {
-	var role models.Role
-	if err = config.DB.Model(&role).Where("status = ?", "1").Where("name != ?", "Super Admin").Find(&roles).Error; err != nil {
-		res.Message = err.Error()
-		return
-	}
 	return
 }

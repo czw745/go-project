@@ -1,16 +1,17 @@
 package services
 
 import (
+	"fmt"
 	"go-project/config"
 	"go-project/models"
 	"go-project/structs"
 	"strconv"
 )
 
-//GetAllUsers Fetch all user data
+//GetAllUsers ... Fetch all user data
 func GetAllUsers(page, pageSize string) (result structs.Pagination, res structs.Response, err error) {
-	var users []models.UserResponse
-	if err = config.DB.Table("users").Preload("Roles").Scopes(Paginate(page, pageSize)).Find(&users).Error; err != nil {
+	var users []models.User
+	if err = config.DB.Preload("Roles").Scopes(Paginate(page, pageSize)).Find(&users).Error; err != nil {
 		res.Message = err.Error()
 		return
 	}
@@ -26,6 +27,7 @@ func GetAllUsers(page, pageSize string) (result structs.Pagination, res structs.
 func CreateUser(user *models.User) (res structs.Response, err error) {
 	hash, _ := HashPassword(user.Password)
 	user.Password = hash
+	fmt.Println("user", user)
 	if err = config.DB.Create(user).Error; err != nil {
 		res.Message = err.Error()
 		return
@@ -69,9 +71,11 @@ func GetUserByKeyword(page, pageSize, keyword string) (result structs.Pagination
 
 //UpdateUser ... Update user
 func UpdateUser(user models.User) (res structs.Response, err error) {
-	role := user.Roles
-	config.DB.Model(&user).Association("Role").Clear()
-	user.Roles = role
+	roles := user.Roles
+	config.DB.Model(&user).Association("Roles").Clear()
+	user.Roles = roles
+	hash, _ := HashPassword(user.Password)
+	user.Password = hash
 	if err = config.DB.Save(&user).Error; err != nil {
 		res.Message = err.Error()
 		return

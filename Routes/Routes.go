@@ -3,6 +3,7 @@ package routes
 import (
 	"go-project/controllers/permission"
 	"go-project/controllers/role"
+	"go-project/controllers/selects"
 	"go-project/controllers/user"
 
 	"github.com/gin-contrib/cors"
@@ -24,7 +25,6 @@ func SetupRouter() *gin.Engine {
 			apiUser.GET("/search", user.Search)
 			apiUser.PUT("/update/:id", user.Update)
 			apiUser.DELETE("/delete/:id", user.Delete)
-			apiUser.GET("/role-select", user.RoleSelect)
 		}
 
 		apiRole := apiv1.Group("/role")
@@ -40,6 +40,11 @@ func SetupRouter() *gin.Engine {
 		apiPermission := apiv1.Group("/permission")
 		{
 			apiPermission.GET("/list", permission.Get)
+		}
+
+		apiSelect := apiv1.Group("/select")
+		{
+			apiSelect.GET("/roles", selects.SelectRoles)
 		}
 	}
 	return r
