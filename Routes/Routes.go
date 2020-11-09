@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"go-project/controllers/auth"
 	"go-project/controllers/permission"
 	"go-project/controllers/role"
 	"go-project/controllers/selects"
@@ -17,6 +18,14 @@ func SetupRouter() *gin.Engine {
 
 	apiv1 := r.Group("/api/v1")
 	{
+		apiAuth := apiv1.Group("/auth")
+		{
+			apiAuth.POST("/login", auth.Login)
+			apiAuth.POST("/logout", auth.Logout)
+			apiAuth.GET("/info", auth.Info)
+			apiAuth.POST("/refresh-token", auth.RefreshToken)
+		}
+
 		apiUser := apiv1.Group("/user")
 		{
 			apiUser.GET("/query", user.Get)
