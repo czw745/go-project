@@ -9,8 +9,8 @@ import (
 
 //GetAllRoles Fetch all role data
 func GetAllRoles(page, pageSize string) (result structs.Pagination, res structs.Response, err error) {
-	var role []models.RoleResponse
-	if err = config.DB.Table("roles").Preload("Permissions.PermissionCategory").Scopes(Paginate(page, pageSize)).Find(&role).Error; err != nil {
+	var role []models.Role
+	if err = config.DB.Preload("Permissions.PermissionCategory").Scopes(Paginate(page, pageSize)).Find(&role).Error; err != nil {
 		res.Message = err.Error()
 		return
 	}

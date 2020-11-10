@@ -6,6 +6,7 @@ import (
 	"go-project/controllers/role"
 	"go-project/controllers/selects"
 	"go-project/controllers/user"
+	"go-project/middleware"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -21,9 +22,9 @@ func SetupRouter() *gin.Engine {
 		apiAuth := apiv1.Group("/auth")
 		{
 			apiAuth.POST("/login", auth.Login)
-			apiAuth.POST("/logout", auth.Logout)
-			apiAuth.GET("/info", auth.Info)
-			apiAuth.POST("/refresh-token", auth.RefreshToken)
+			apiAuth.POST("/logout/:id", middleware.AuthMiddleware(), auth.Logout)
+			apiAuth.GET("/info", middleware.AuthMiddleware(), auth.Info)
+			apiAuth.POST("/refresh-token", middleware.AuthMiddleware(), auth.RefreshToken)
 		}
 
 		apiUser := apiv1.Group("/user")

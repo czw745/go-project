@@ -1,9 +1,5 @@
 package models
 
-import (
-	"time"
-)
-
 //User struct
 type User struct {
 	Default
@@ -23,11 +19,9 @@ func (b *User) TableName() string {
 
 //UserResponse struct
 type UserResponse struct {
-	ID        uint      `json:"id"`
-	Name      string    `json:"name"`
-	Email     string    `json:"email"`
-	Status    uint      `json:"status"`
-	Deletable uint      `json:"deletable"`
-	CreatedAt time.Time `json:"created_at"`
-	Roles     []Role    `gorm:"foreignKey:ID" json:"roles"`
+	ID     uint   `json:"id"`
+	Name   string `json:"name"`
+	Email  string `json:"email"`
+	Status uint   `json:"status"`
+	Roles  []Role `gorm:"foreignKey:ID" json:"roles"`
 }
